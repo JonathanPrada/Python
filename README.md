@@ -12,7 +12,7 @@ With Git shell clone this folder and run locally.
 
 ## History
 
-First
+First version of repository 14.12.2016
 
 ## Credits
 
