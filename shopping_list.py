@@ -1,6 +1,6 @@
-#TODO: Need to add delete option
-#TODO: Need to add send functionality
-#TODO: Need to validate input
+#Need to add delete option
+#Need to add send functionality
+#Need to validate input
 
 #make a list to hold onto our items
 shopping_list = []
