@@ -13,8 +13,43 @@
 # limitations under the License.
 
 #webapp2 is a lightweight
-#Python web framework compatible with Google App Engine’s
+#Python web framework compatible with Google App Engines
 import webapp2
+
+#Month list
+months = ['January','February','March','April','May'
+,'June','July','August','September','October','November','December']
+
+#build a dictionary that maps name of the months
+#to the first three letters of each of the months themselves
+#so for m in months = january
+#dict('jan':january)
+#store dictionary in month abbvs
+month_abbvs = dict((m[:3].lower(),m) for m in months)
+
+#Checks valid months
+def valid_month(month):
+    if month:
+        #takes first three letters of month and lowercases it
+        #prepare the key for the dictionary
+        short_month = month[:3].lower()
+        #use Get function on dictionary to return the month
+        #using the user value that was converted into a key
+        return month_abbvs.get(short_month)
+
+#Checks valid day
+def valid_day(day):
+    if day and day.isdigit():
+        day = int(day)
+        if day > 0 and day <=31:
+            return day
+
+#Checks valid_year(year)
+def valid_year(year):
+    if year and year.isdigit():
+        year = int(year)
+        if year > 1900 and year < 2020:
+            return year
 
 #form that creates an empty field
 #has a button to submit values
@@ -25,10 +60,30 @@ import webapp2
 #POST includes data in the request text, used for updating data
 
 form = """
-    <form method="post" action="/testform">
-        <input name="q">
-        <input type="submit">
-    </form>
+<form method="post" action="/">
+        What is your birthday?
+        <br>
+
+        <label>
+        month
+                    <input type="text" name="month">
+        </label>
+
+        <label>
+        day
+                    <input type="text" name="day">
+        </label>
+
+        <label>
+        year
+                    <input type="text" name="year">
+        </label>
+
+        <br>
+        <br>
+        <input type = "submit">
+
+</form>
 """
 
 #main page inherits from webapp2's requestHandler
@@ -42,24 +97,22 @@ class MainPage(webapp2.RequestHandler):
         #default type is html
         #----> self.response.headers['Content-Type'] = 'text/plain'
         #Then we are writing a string 'Hello World!'
-        self.response.write('Hello World!')
+        #self.response.write('Hello World!')
         #We can also print out our form stored in the form variable
         self.response.write(form)
 
-#Gets called when we post to TestHandler
-class TestHandler(webapp2.RequestHandler):
     def post(self):
-        #gets the parameter from the client side
-        q = self.request.get("q")
-        #writes out the value of q to /testform
-        self.response.out.write(q)
-        #self.response.headers['Content-Type'] = 'text/plain'
-        #self.response.write(self.request)
+        user_month = valid_month (self.request.get('month'))
+        user_day = valid_day (self.request.get('day'))
+        user_year = valid_year (self.request.get('year'))
+
+        if not (user_month and user_day and user_year):
+            self.response.write(form)
+        else:
+            self.response.write("Thanks! Thats a totally valid day!")
 
 #URL Mapping Section
 #One url just '/'
 #maps to handler called MainPage
 #Second url will be handled by testform
-app = webapp2.WSGIApplication([
-    ('/', MainPage), ('/testform', TestHandler)
-], debug=True)
+app = webapp2.WSGIApplication([('/', MainPage)], debug=True)
