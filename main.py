@@ -15,6 +15,7 @@
 #webapp2 is a lightweight
 #Python web framework compatible with Google App Engines
 import webapp2
+import cgi
 
 #Month list
 months = ['January','February','March','April','May'
@@ -51,6 +52,10 @@ def valid_year(year):
         if year > 1900 and year < 2020:
             return year
 
+#uses the cgi method to escape code in text fields
+def escape_html(s):
+    return cgi.escape(s, quote = True)
+
 #form that creates an empty field
 #has a button to submit values
 #sends to url /testform
@@ -66,29 +71,36 @@ form = """
 
         <label>
         month
-                    <input type="text" name="month">
+                    <input type="text" name="%(month)s">
         </label>
 
         <label>
         day
-                    <input type="text" name="day">
+                    <input type="text" name="%(day)s">
         </label>
 
         <label>
         year
-                    <input type="text" name="year">
+                    <input type="text" name="%(year)s">
         </label>
+        <div style="color: red">%(error)s</div>
 
         <br>
         <br>
         <input type = "submit">
-
 </form>
 """
 
 #main page inherits from webapp2's requestHandler
 #This is what draws the form
 class MainPage(webapp2.RequestHandler):
+    def write_form(self, error="", month="", day="", year=""):
+        #We assign the error message using our escape function
+        self.response.out.write(form % {"error": error,
+                                        "month": escape_html(month),
+                                        "day": escape_html(day),
+                                        "year": escape_html(year)})
+
     def get(self):
         #global response object that this framework uses
         #it sets a header with content type, we use
@@ -99,20 +111,30 @@ class MainPage(webapp2.RequestHandler):
         #Then we are writing a string 'Hello World!'
         #self.response.write('Hello World!')
         #We can also print out our form stored in the form variable
-        self.response.write(form)
+        self.write_form()
 
+    #When the form is submitted this runs
     def post(self):
-        user_month = valid_month (self.request.get('month'))
-        user_day = valid_day (self.request.get('day'))
-        user_year = valid_year (self.request.get('year'))
+        user_month = self.request.get('month')
+        user_day = self.request.get('day')
+        user_year = self.request.get('year')
 
-        if not (user_month and user_day and user_year):
-            self.response.write(form)
+        month = valid_month(user_month)
+        day = valid_day(user_day)
+        year = valid_year(user_year)
+
+        if not (month and day and year):
+            self.write_form("that does not look right to me",
+                            user_month, user_year, user_day)
         else:
-            self.response.write("Thanks! Thats a totally valid day!")
+            self.redirect("/thanks")
+
+class ThanksHandler(webapp2.RequestHandler):
+    def get(self):
+        self.response.out.write("Thanks! Thats a totally valid day!")
 
 #URL Mapping Section
 #One url just '/'
 #maps to handler called MainPage
 #Second url will be handled by testform
-app = webapp2.WSGIApplication([('/', MainPage)], debug=True)
+app = webapp2.WSGIApplication([('/', MainPage), ('/thanks', ThanksHandler)], debug=True)
