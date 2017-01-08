@@ -1,0 +1,45 @@
+<form>
+    <h2>Add a Food</h2>
+    <input type="text" name="food">
+    <button>Add</button>
+    <!--Using text substituting Jinja/templating syntax below -->
+    <h2>hello, {{n}}</h2>
+
+    <!--Using statement Jinja/templating syntax below -->
+    {% if n == 1 %}
+        n equals 1
+    {% else %}
+        no does not equal 1
+    {% endif %}
+
+
+    <!--Using for loop Jinja/templating syntax below -->
+    <ol>
+    <!--if n is 10, it will go from 1 to 10 -->
+    {% for x in range (1, n+1) %}
+    <!--x squared -->
+        <li>{{x ** 2}}</li>
+    {% endfor %}
+    </ol>
+
+    <!--Rendering Jinja/templating syntax below -->
+    <ol>
+    <!--if n is 10, it will go from 1 to 10 -->
+    <!--n has plus 1 because it cuts of the last num so n is 10 but registers as 9 withouth the + 1 -->
+    {% for x in range (1, n+1) %}
+        <li>
+        <!--if x is divisible by 15 and the remainder is 0 -->
+        {% if x % 15 == 0 %}
+            Fizzbuzz
+        {% elif x % 3 == 0 %}
+            Fizz
+        {% elif x % 5 == 0 %}
+            Buzz
+        {% else %}
+            {{ x }}
+        {% endif %}
+        </li>
+    {% endfor %}
+    </ol>
+
+</form>
