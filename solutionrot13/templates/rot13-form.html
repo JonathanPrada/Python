@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Unit 2 Rot 13</title>
+  </head>
+  <!--3
+  {{text}} will be what the class returns
+  We also have autoescaping so html gets submitted
+  normally. name="text" will post the submitted text to our class too.
+  -->
+  <body>
+    <h2>Enter some text to ROT13:</h2>
+    <form method="post">
+      <textarea name="text"
+                style="height: 100px; width: 400px;">{{text}}</textarea>
+      <br>
+      <input type="submit">
+    </form>
+  </body>
+
+</html>
