@@ -40,15 +40,18 @@ class Rot13(BaseHandler):
 
         self.render('rot13-form.html', text = rot13)
 
-
+#8
+#regular expressions
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
+    #if it is not blank and matches regular expression
     return username and USER_RE.match(username)
 
 PASS_RE = re.compile(r"^.{3,20}$")
 def valid_password(password):
     return password and PASS_RE.match(password)
 
+#Here we handle the optional email by use not and or
 EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
 def valid_email(email):
     return not email or EMAIL_RE.match(email)
@@ -60,18 +63,29 @@ class Signup(BaseHandler):
     def get(self):
         self.render("signup-form.html")
 
+    #6
     #gets the variables returned by the html form
     #applies algorithms
     def post(self):
+        #If the files makes it through without error
+        #the variable below remains as false
+        #otherwise we render the error
         have_error = False
         username = self.request.get('username')
         password = self.request.get('password')
         verify = self.request.get('verify')
         email = self.request.get('email')
 
+        #9
+        #These are parameters we send back into rendering
+        #Dictionary will grow with more parameters given in
+        #by the below if not valid functions
         params = dict(username = username,
                       email = email)
 
+        #7
+        #Then we run each of the inputs through the
+        #validation functions
         if not valid_username(username):
             params['error_username'] = "That's not a valid username."
             have_error = True
@@ -87,11 +101,20 @@ class Signup(BaseHandler):
             params['error_email'] = "That's not a valid email."
             have_error = True
 
+        #10
+        #Lastly, if we have errors then render sign up page
+        #With the username and email previously given
+        #Else give us a welcome page with the username passed
         if have_error:
             self.render('signup-form.html', **params)
         else:
+            #This redirects to handler which redirects to step 11
             self.redirect('/unit2/welcome?username=' + username)
 
+#11
+#Class that handles the welcome page
+#Checks if valid username passed then go ahead
+#Else return to sign up
 class Welcome(BaseHandler):
     def get(self):
         username = self.request.get('username')
